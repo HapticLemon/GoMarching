@@ -1,0 +1,2 @@
+20191013    Primer render funcional.
+20191015    Paquete vectores, definiciones en archivo aparte.
