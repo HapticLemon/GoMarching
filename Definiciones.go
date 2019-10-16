@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./Clases"
 	"./Vectores"
 )
 
@@ -20,3 +21,7 @@ var correccion float64 = 0.5
 var ImageAspectRatio float64 = 1.6
 var MAXSTEPS = 32
 var MINIMUM_HIT_DISTANCE = 0.05
+
+// Slice genérica en la que almacenaremos todos los objetos
+//
+var Objetos []Clases.Objeto

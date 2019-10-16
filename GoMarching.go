@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./Clases"
 	"./Vectores"
 	"fmt"
 	"image"
@@ -21,9 +22,18 @@ func distanciaEsfera(punto Vectores.Vector) float64 {
 // Por implementar
 //
 func mapTheWorld(punto Vectores.Vector) float64 {
-	var distancia float64
+	// Distancia inicial arbitrariamente grande.
+	//
+	var distancia float64 = 1000
+	var distanciaObjeto float64
 
-	distancia = distanciaEsfera(punto)
+	for _, elemento := range Objetos {
+		distanciaObjeto = elemento.Distancia(punto)
+		if distanciaObjeto < distancia {
+			distancia = distanciaObjeto
+		}
+	}
+
 	return distancia
 }
 
@@ -85,6 +95,15 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 	return color
 }
 
+func defineObjetos() {
+	esfera_0 := Clases.Esfera{
+		Clases.BaseObject{0, 0},
+		2.0,
+	}
+
+	Objetos = append(Objetos, esfera_0)
+}
+
 func main() {
 	//var V1 = Vectores.Vector{1,0,1}
 	//var V2 = Vectores.Vector{1,2,0}
@@ -103,6 +122,7 @@ func main() {
 	var rd Vectores.Vector
 	var color color.RGBA
 
+	defineObjetos()
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
 	out, err := os.Create("./output.jpg")
 	if err != nil {
@@ -124,8 +144,6 @@ func main() {
 			PixelCamera_y = PixelScreen_y
 
 			// Origen y dirección
-			//
-			// ro = EYE + FORWARD * FL + RIGHT * PixelCamera_x + UP * PixelCamera_y
 
 			ro = EYE.Add(FORWARD.MultiplyByScalar(FL)).Add(RIGHT.MultiplyByScalar(PixelCamera_x)).Add(UP.MultiplyByScalar(PixelCamera_y))
 			rd = ro.Sub(EYE).Normalize()
