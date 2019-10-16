@@ -41,3 +41,13 @@ func (a Vector) Length() float64 {
 func (a Vector) Normalize() Vector {
 	return a.MultiplyByScalar(1. / a.Length())
 }
+
+// Valor absoluto de las coordenadas de un vector.
+//
+func (a Vector) Abs() Vector {
+	return Vector{
+		X: math.Abs(a.X),
+		Y: math.Abs(a.Y),
+		Z: math.Abs(a.Z),
+	}
+}

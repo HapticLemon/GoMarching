@@ -11,5 +11,5 @@ type Esfera struct {
 }
 
 func (e Esfera) Distancia(punto Vectores.Vector) float64 {
-	return punto.Length() - 10
+	return punto.Sub(e.Translation).Length() - e.Radio
 }

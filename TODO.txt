@@ -1,2 +1,4 @@
 20191013    Primer render funcional.
 20191015    Paquete vectores, definiciones en archivo aparte.
+20191016    Creo objeto genérico y derivado esfera. Lista genérica.
+20191016    Añadido Octaedro.

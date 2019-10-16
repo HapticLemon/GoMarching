@@ -7,6 +7,8 @@ import (
 
 var FL float64 = 1.0
 
+const CTEOCTAEDRO = 0.57735027
+
 var EYE = Vectores.Vector{0, 0, -15}
 var UP = Vectores.Vector{0, 1, 0}
 var RIGHT = Vectores.Vector{1, 0, 0}

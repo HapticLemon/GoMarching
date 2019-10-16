@@ -97,11 +97,32 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 
 func defineObjetos() {
 	esfera_0 := Clases.Esfera{
-		Clases.BaseObject{0, 0},
-		2.0,
+		Clases.BaseObject{0,
+			0,
+			Vectores.Vector{12, 0, 0},
+		},
+		1.0,
+	}
+
+	esfera_1 := Clases.Esfera{
+		Clases.BaseObject{1,
+			0,
+			Vectores.Vector{0, 0, 0},
+		},
+		5.0,
+	}
+
+	octaedro_0 := Clases.Octaedro{
+		Clases.BaseObject{2,
+			0,
+			Vectores.Vector{6, 0, 0},
+		},
+		5.0,
 	}
 
 	Objetos = append(Objetos, esfera_0)
+	Objetos = append(Objetos, esfera_1)
+	Objetos = append(Objetos, octaedro_0)
 }
 
 func main() {
