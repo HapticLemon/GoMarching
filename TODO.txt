@@ -2,3 +2,8 @@
 20191015    Paquete vectores, definiciones en archivo aparte.
 20191016    Creo objeto genérico y derivado esfera. Lista genérica.
 20191016    Añadido Octaedro.
+20191017    Añadidos colores para cada objeto.
+
+TODO :
+
+

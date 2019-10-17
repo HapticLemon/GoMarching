@@ -1,6 +1,9 @@
 package Clases
 
-import "../Vectores"
+import (
+	"../Vectores"
+	"image/color"
+)
 
 // Definición de la clase esfera.
 // OJO, para poder exportarlo fuera del paquete ha de comenzar por
@@ -12,4 +15,8 @@ type Esfera struct {
 
 func (e Esfera) Distancia(punto Vectores.Vector) float64 {
 	return punto.Sub(e.Translation).Length() - e.Radio
+}
+
+func (e Esfera) GetColor() color.RGBA {
+	return e.Color
 }

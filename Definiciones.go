@@ -3,6 +3,7 @@ package main
 import (
 	"./Clases"
 	"./Vectores"
+	"image/color"
 )
 
 var FL float64 = 1.0
@@ -27,3 +28,4 @@ var MINIMUM_HIT_DISTANCE = 0.05
 // Slice genérica en la que almacenaremos todos los objetos
 //
 var Objetos []Clases.Objeto
+var currentColor color.RGBA

@@ -2,6 +2,7 @@ package Clases
 
 import (
 	"../Vectores"
+	"image/color"
 )
 
 // Definición de la clase esfera.
@@ -22,4 +23,8 @@ func (o Octaedro) Distancia(punto Vectores.Vector) float64 {
 	// Hay que hacer que use la cte definida y no esté hardcodeado.
 	//
 	return (puntoAbsoluto.X + puntoAbsoluto.Y + puntoAbsoluto.Z - o.Radio) * 0.57735027
+}
+
+func (o Octaedro) GetColor() color.RGBA {
+	return o.Color
 }

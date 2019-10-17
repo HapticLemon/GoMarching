@@ -31,6 +31,7 @@ func mapTheWorld(punto Vectores.Vector) float64 {
 		distanciaObjeto = elemento.Distancia(punto)
 		if distanciaObjeto < distancia {
 			distancia = distanciaObjeto
+			currentColor = elemento.GetColor()
 		}
 	}
 
@@ -54,14 +55,11 @@ func calculateNormal(punto Vectores.Vector) Vectores.Vector {
 // Cálculo de iluminación difusa
 //
 func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Vector) color.RGBA {
-	var luz Vectores.Vector
 	var color = color.RGBA{0, 0, 0, 0}
 
-	luz = COLOR.MultiplyByScalar(diffuseIntensity)
-
-	color.R = uint8(luz.X)
-	color.G = uint8(luz.Y)
-	color.B = uint8(luz.Z)
+	color.R = uint8(float64(currentColor.R) * diffuseIntensity)
+	color.G = uint8(float64(currentColor.G) * diffuseIntensity)
+	color.B = uint8(float64(currentColor.B) * diffuseIntensity)
 	color.A = 255
 
 	return color
@@ -100,6 +98,7 @@ func defineObjetos() {
 		Clases.BaseObject{0,
 			0,
 			Vectores.Vector{12, 0, 0},
+			color.RGBA{100, 0, 0, 0},
 		},
 		1.0,
 	}
@@ -108,6 +107,7 @@ func defineObjetos() {
 		Clases.BaseObject{1,
 			0,
 			Vectores.Vector{0, 0, 0},
+			color.RGBA{100, 0, 0, 0},
 		},
 		5.0,
 	}
@@ -116,6 +116,7 @@ func defineObjetos() {
 		Clases.BaseObject{2,
 			0,
 			Vectores.Vector{6, 0, 0},
+			color.RGBA{0, 100, 0, 0},
 		},
 		5.0,
 	}
