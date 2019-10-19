@@ -4,7 +4,14 @@
 20191016    Añadido Octaedro.
 20191017    Añadidos colores para cada objeto.
 20191019    Añadida carga de escena desde Json
+20191019    Añadida gestión octaedro desde Json
+20191019    Añadir parámetro de programa con el nombre del archivo de escena y salida.
 
 TODO :
+    -
+    - Añadir texturas
+        Worley
+        Mármol
+
 
 

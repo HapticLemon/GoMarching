@@ -29,3 +29,23 @@ var MINIMUM_HIT_DISTANCE = 0.05
 //
 var Objetos []Clases.Objeto
 var currentColor color.RGBA
+
+type Escena struct {
+	Escena []Objeto `json:"Escena"`
+}
+
+type Objeto struct {
+	Name        string `json:"Name"`
+	Type        string `json:"Type"`
+	Material    string `json:"Material"`
+	Radio       int    `json:"Radio"`
+	Translation []int  `json:Translation`
+	Color       []int  `json:Translation`
+}
+
+// En Go las enumeraciones se montan así.
+const (
+	NOMAT = iota
+	WORLEY3D
+	MARMOL
+)

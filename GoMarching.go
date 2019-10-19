@@ -13,26 +13,8 @@ import (
 	"os"
 )
 
-type Escena struct {
-	Escena []Objeto `json:"Escena"`
-}
-
-type Objeto struct {
-	Name        string `json:"Name"`
-	Type        string `json:"Type"`
-	Material    string `json:"Material"`
-	Radio       int    `json:"Radio"`
-	Translation []int  `json:Translation`
-	Color       []int  `json:Translation`
-}
-
-// En Go las enumeraciones se montan así.
-const (
-	NOMAT = iota
-	WORLEY3D
-	MARMOL
-)
-
+// Carga de objetos desde archivo Json
+//
 func cargaObjetos(escena Escena) {
 	var id int = 0
 	var material int = 0
@@ -82,7 +64,17 @@ func cargaObjetos(escena Escena) {
 				float64(escena.Escena[i].Radio),
 			}
 			Objetos = append(Objetos, esfera)
-
+		case "Octaedro":
+			octaedro := Clases.Octaedro{
+				Clases.BaseObject{
+					id,
+					material,
+					translationVec,
+					colorVec,
+				},
+				float64(escena.Escena[i].Radio),
+			}
+			Objetos = append(Objetos, octaedro)
 		}
 	}
 }
@@ -181,8 +173,19 @@ func main() {
 	var rd Vectores.Vector
 	var color color.RGBA
 
+	var fileIn string
+	var fileOut string
+
+	//argsWithProg := os.Args
+	argsWithoutProg := os.Args[1:]
+
+	fileIn = argsWithoutProg[0]
+	fileOut = argsWithoutProg[1]
+
+	fmt.Printf("Files In : %s, Out %s\n", fileIn, fileOut)
+
 	// Open our jsonFile
-	jsonFile, err := os.Open("escena.json")
+	jsonFile, err := os.Open(fileIn)
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)
@@ -199,11 +202,10 @@ func main() {
 	// jsonFile's content into 'users' which we defined above
 	json.Unmarshal(byteValue, &escena)
 
-	//defineObjetos()
 	cargaObjetos(escena)
 
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
-	out, err := os.Create("./output.jpg")
+	out, err := os.Create(fileOut)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -247,5 +249,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Generated image to output.jpg \n")
+	fmt.Printf("Generated image to %s \n", fileOut)
 }

@@ -12,9 +12,17 @@
     "Name" : "Esfera_1",
     "Type" : "Esfera",
     "Material" : "WORLEY3D",
-    "Radio" : 6,
-    "Translation" : [7,0,0],
+    "Radio" : 4,
+    "Translation" : [7,10,0],
     "Color" : [0,250,250]
+  },
+  {
+    "Name" : "Octaedro_0",
+    "Type" : "Octaedro",
+    "Material" : "WORLEY3D",
+    "Radio" : 6,
+    "Translation" : [10,-5,0],
+    "Color" : [200,250,250]
   }
 ]
 }
