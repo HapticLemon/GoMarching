@@ -1,0 +1,20 @@
+{ "Escena" :
+[
+  {
+    "Name" : "Esfera_0",
+    "Type" : "Esfera",
+    "Material" : "NOMAT",
+    "Radio" : 7,
+    "Translation" : [0,1,0],
+    "Color" : [100,0,0]
+  },
+  {
+    "Name" : "Esfera_1",
+    "Type" : "Esfera",
+    "Material" : "WORLEY3D",
+    "Radio" : 6,
+    "Translation" : [7,0,0],
+    "Color" : [0,250,250]
+  }
+]
+}

@@ -3,13 +3,89 @@ package main
 import (
 	"./Clases"
 	"./Vectores"
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io/ioutil"
 	"math"
 	"os"
 )
+
+type Escena struct {
+	Escena []Objeto `json:"Escena"`
+}
+
+type Objeto struct {
+	Name        string `json:"Name"`
+	Type        string `json:"Type"`
+	Material    string `json:"Material"`
+	Radio       int    `json:"Radio"`
+	Translation []int  `json:Translation`
+	Color       []int  `json:Translation`
+}
+
+// En Go las enumeraciones se montan así.
+const (
+	NOMAT = iota
+	WORLEY3D
+	MARMOL
+)
+
+func cargaObjetos(escena Escena) {
+	var id int = 0
+	var material int = 0
+	var translationRaw []int
+	var translationVec = Vectores.Vector{0, 0, 0}
+	var colorRaw []int
+	var colorVec = color.RGBA{0, 0, 0, 0}
+
+	for i := 0; i < len(escena.Escena); i++ {
+		// Procesamos el tipo de material para que pase de string a enum.
+		switch escena.Escena[i].Material {
+		case "NOMAT":
+			material = NOMAT
+		case "WORLEY3D":
+			material = WORLEY3D
+		case "MARMOL":
+			material = MARMOL
+		}
+
+		// Es una forma bastante ortopédica de hacerlo pero funciona.
+		// ¿No puede hacerse de forma directa?
+		// El campo es opcional.
+		if escena.Escena[i].Translation != nil {
+			translationRaw = escena.Escena[i].Translation
+			translationVec.X = float64(translationRaw[0])
+			translationVec.Y = float64(translationRaw[1])
+			translationVec.Z = float64(translationRaw[2])
+		}
+
+		// Lo mismo con el caso del color.
+		if escena.Escena[i].Color != nil {
+			colorRaw = escena.Escena[i].Color
+			colorVec.R = uint8(colorRaw[0])
+			colorVec.G = uint8(colorRaw[1])
+			colorVec.B = uint8(colorRaw[2])
+		}
+
+		switch escena.Escena[i].Type {
+		case "Esfera":
+			esfera := Clases.Esfera{
+				Clases.BaseObject{
+					id,
+					material,
+					translationVec,
+					colorVec,
+				},
+				float64(escena.Escena[i].Radio),
+			}
+			Objetos = append(Objetos, esfera)
+
+		}
+	}
+}
 
 // Para simplificar, considero una esfera de radio1 en el centro de coordenadas.
 //
@@ -93,46 +169,7 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 	return color
 }
 
-func defineObjetos() {
-	esfera_0 := Clases.Esfera{
-		Clases.BaseObject{0,
-			0,
-			Vectores.Vector{12, 0, 0},
-			color.RGBA{100, 0, 0, 0},
-		},
-		1.0,
-	}
-
-	esfera_1 := Clases.Esfera{
-		Clases.BaseObject{1,
-			0,
-			Vectores.Vector{0, 0, 0},
-			color.RGBA{100, 0, 0, 0},
-		},
-		5.0,
-	}
-
-	octaedro_0 := Clases.Octaedro{
-		Clases.BaseObject{2,
-			0,
-			Vectores.Vector{6, 0, 0},
-			color.RGBA{0, 100, 0, 0},
-		},
-		5.0,
-	}
-
-	Objetos = append(Objetos, esfera_0)
-	Objetos = append(Objetos, esfera_1)
-	Objetos = append(Objetos, octaedro_0)
-}
-
 func main() {
-	//var V1 = Vectores.Vector{1,0,1}
-	//var V2 = Vectores.Vector{1,2,0}
-
-	//var v3 = V1.Add(V2).MultiplyByScalar(escalar)
-	//fmt.Printf("Vectores.Vector %f, %f, %f", v3.X,v3.Y,v3.Z)
-
 	var NDC_x float64
 	var NDC_y float64
 	var PixelScreen_x float64
@@ -144,7 +181,27 @@ func main() {
 	var rd Vectores.Vector
 	var color color.RGBA
 
-	defineObjetos()
+	// Open our jsonFile
+	jsonFile, err := os.Open("escena.json")
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Successfully Opened users.json")
+
+	// read our opened xmlFile as a byte array.
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	// we initialize our Users array
+	var escena Escena
+
+	// we unmarshal our byteArray which contains our
+	// jsonFile's content into 'users' which we defined above
+	json.Unmarshal(byteValue, &escena)
+
+	//defineObjetos()
+	cargaObjetos(escena)
+
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
 	out, err := os.Create("./output.jpg")
 	if err != nil {
