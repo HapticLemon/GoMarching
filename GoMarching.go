@@ -2,6 +2,7 @@ package main
 
 import (
 	"./Clases"
+	"./Ruido"
 	"./Vectores"
 	"encoding/json"
 	"fmt"
@@ -94,15 +95,17 @@ func mapTheWorld(punto Vectores.Vector) float64 {
 	//
 	var distancia float64 = 1000
 	var distanciaObjeto float64
+	var material int
 
 	for _, elemento := range Objetos {
 		distanciaObjeto = elemento.Distancia(punto)
 		if distanciaObjeto < distancia {
 			distancia = distanciaObjeto
 			currentColor = elemento.GetColor()
+			material = elemento.GetMaterial()
 		}
 	}
-
+	CurrentMaterial = material
 	return distancia
 }
 
@@ -121,14 +124,31 @@ func calculateNormal(punto Vectores.Vector) Vectores.Vector {
 }
 
 // Cálculo de iluminación difusa
+// Hay que pasar punto, material, difusa y normal
 //
 func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Vector) color.RGBA {
 	var color = color.RGBA{0, 0, 0, 0}
 
-	color.R = uint8(float64(currentColor.R) * diffuseIntensity)
-	color.G = uint8(float64(currentColor.G) * diffuseIntensity)
-	color.B = uint8(float64(currentColor.B) * diffuseIntensity)
-	color.A = 255
+	if CurrentMaterial == NOMAT {
+		color.R = uint8(float64(currentColor.R) * diffuseIntensity)
+		color.G = uint8(float64(currentColor.G) * diffuseIntensity)
+		color.B = uint8(float64(currentColor.B) * diffuseIntensity)
+		color.A = 255
+	} else if CurrentMaterial == WORLEY3D {
+		// Hay que cambiar ésto. De momento sólo para que funcione la prueba
+		//
+		var puntoWorley [3]float64
+		puntoWorley[0] = punto.X
+		puntoWorley[1] = punto.Y
+		puntoWorley[2] = punto.Z
+
+		var worley3dValue = Ruido.Worley3D(puntoWorley)
+
+		color.R = uint8(float64(currentColor.R) * worley3dValue)
+		color.G = uint8(float64(currentColor.G) * worley3dValue)
+		color.B = uint8(float64(currentColor.B) * worley3dValue)
+		color.A = 255
+	}
 
 	return color
 }

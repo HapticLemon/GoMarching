@@ -49,3 +49,5 @@ const (
 	WORLEY3D
 	MARMOL
 )
+
+var CurrentMaterial int

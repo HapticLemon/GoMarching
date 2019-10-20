@@ -20,3 +20,7 @@ func (e Esfera) Distancia(punto Vectores.Vector) float64 {
 func (e Esfera) GetColor() color.RGBA {
 	return e.Color
 }
+
+func (e Esfera) GetMaterial() int {
+	return e.Material
+}

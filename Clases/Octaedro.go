@@ -28,3 +28,7 @@ func (o Octaedro) Distancia(punto Vectores.Vector) float64 {
 func (o Octaedro) GetColor() color.RGBA {
 	return o.Color
 }
+
+func (o Octaedro) GetMaterial() int {
+	return o.Material
+}

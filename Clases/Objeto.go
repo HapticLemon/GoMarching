@@ -8,4 +8,5 @@ import (
 type Objeto interface {
 	Distancia(Vectores.Vector) float64
 	GetColor() color.RGBA
+	GetMaterial() int
 }
