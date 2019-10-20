@@ -14,10 +14,10 @@ var distP [10]int = [10]int{4, 4, 6, 5, 3, 4, 8, 8, 7, 5}
 
 // Calculo una semilla diferente para cada uno de los cubos.
 //
-func calculateSeed(cube [3]int) int {
+func calculateSeed(cube Vectores.Vector) int {
 	var seed int
 
-	seed = (541*cube[0] + 79*cube[1] + 31*cube[2]) % 4294967296
+	seed = int(541*cube.X+79*cube.Y+31*cube.Z) % 4294967296
 	return seed
 }
 
@@ -58,13 +58,13 @@ func geometric() float64 {
 // Les añado las del cubo para poder calcular la distancia al punto
 // original, ya que las coordenadas de éste no están en el rango 0-1
 //
-func generatePoint(seed int, cube [3]int) [3]float64 {
+func generatePoint(seed int, cube Vectores.Vector) [3]float64 {
 
 	var point [3]float64
 
-	point[0] = uniform() + float64(cube[0])
-	point[1] = uniform() + float64(cube[1])
-	point[2] = uniform() + float64(cube[2])
+	point[0] = uniform() + float64(cube.X)
+	point[1] = uniform() + float64(cube.Y)
+	point[2] = uniform() + float64(cube.Z)
 
 	return point
 }
@@ -81,6 +81,9 @@ func euclidean(punto Vectores.Vector, coord [3]float64) float64 {
 
 }
 
+// Función clip. Devuelve valor siempre que esté entre min y max; de lo contrario
+// retorna uno de éstos valores.
+//
 func clip(valor float64, min float64, max float64) float64 {
 	if valor < min {
 		return min
@@ -107,15 +110,15 @@ func Worley3D(punto Vectores.Vector) float64 {
 	var cy int
 	var cz int
 
-	var cube [3]int
+	var cube Vectores.Vector
 	var dummy [3]float64
 
 	for cx = int(math.Floor(punto.X - 1)); cx <= int(math.Floor(punto.X+2)); cx++ {
 		for cy = int(math.Floor(punto.Y - 1)); cy <= int(math.Floor(punto.Y+2)); cy++ {
 			for cz = int(math.Floor(punto.Z - 1)); cz <= int(math.Floor(punto.Z+2)); cz++ {
-				cube[0] = cx
-				cube[1] = cy
-				cube[2] = cz
+				cube.X = float64(cx)
+				cube.Y = float64(cy)
+				cube.Z = float64(cz)
 
 				seed = calculateSeed(cube)
 				points = pointNumber(seed)
