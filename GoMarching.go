@@ -135,14 +135,7 @@ func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Ve
 		color.B = uint8(float64(currentColor.B) * diffuseIntensity)
 		color.A = 255
 	} else if CurrentMaterial == WORLEY3D {
-		// Hay que cambiar ésto. De momento sólo para que funcione la prueba
-		//
-		var puntoWorley [3]float64
-		puntoWorley[0] = punto.X
-		puntoWorley[1] = punto.Y
-		puntoWorley[2] = punto.Z
-
-		var worley3dValue = Ruido.Worley3D(puntoWorley)
+		var worley3dValue = Ruido.Worley3D(punto)
 
 		color.R = uint8(float64(currentColor.R) * worley3dValue)
 		color.G = uint8(float64(currentColor.G) * worley3dValue)

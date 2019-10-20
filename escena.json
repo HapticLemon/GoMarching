@@ -19,7 +19,7 @@
   {
     "Name" : "Octaedro_0",
     "Type" : "Octaedro",
-    "Material" : "WORLEY3D",
+    "Material" : "NOMAT",
     "Radio" : 6,
     "Translation" : [10,-5,0],
     "Color" : [200,250,250]

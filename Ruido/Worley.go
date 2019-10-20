@@ -1,6 +1,7 @@
 package Ruido
 
 import (
+	"../Vectores"
 	"math"
 	"math/rand"
 	"sort"
@@ -71,10 +72,10 @@ func generatePoint(seed int, cube [3]int) [3]float64 {
 // Distancia euclídea entre dos puntos.
 // Quizá exista dentro de alguna librería
 //
-func euclidean(punto [3]float64, coord [3]float64) float64 {
+func euclidean(punto Vectores.Vector, coord [3]float64) float64 {
 	var distancia float64
 
-	distancia = math.Sqrt(math.Pow((coord[0]-punto[0]), 2) + math.Pow((coord[1]-punto[1]), 2) + math.Pow((coord[2]-punto[2]), 2))
+	distancia = math.Sqrt(math.Pow((coord[0]-punto.X), 2) + math.Pow((coord[1]-punto.Y), 2) + math.Pow((coord[2]-punto.Z), 2))
 
 	return distancia
 
@@ -97,7 +98,7 @@ func clip(valor float64, min float64, max float64) float64 {
 //   https://github.com/bhickey/worley/blob/master/worley.c
 //   https://www.kdnuggets.com/2017/08/comparing-distance-measurements-python-scipy.html
 //
-func Worley3D(punto [3]float64) float64 {
+func Worley3D(punto Vectores.Vector) float64 {
 	var minimo float64 = 1000
 	var seed int
 	var points int
@@ -109,9 +110,9 @@ func Worley3D(punto [3]float64) float64 {
 	var cube [3]int
 	var dummy [3]float64
 
-	for cx = int(math.Floor(punto[0] - 1)); cx <= int(math.Floor(punto[0]+2)); cx++ {
-		for cy = int(math.Floor(punto[1] - 1)); cy <= int(math.Floor(punto[1]+2)); cy++ {
-			for cz = int(math.Floor(punto[2] - 1)); cz <= int(math.Floor(punto[2]+2)); cz++ {
+	for cx = int(math.Floor(punto.X - 1)); cx <= int(math.Floor(punto.X+2)); cx++ {
+		for cy = int(math.Floor(punto.Y - 1)); cy <= int(math.Floor(punto.Y+2)); cy++ {
+			for cz = int(math.Floor(punto.Z - 1)); cz <= int(math.Floor(punto.Z+2)); cz++ {
 				cube[0] = cx
 				cube[1] = cy
 				cube[2] = cz
@@ -119,27 +120,13 @@ func Worley3D(punto [3]float64) float64 {
 				seed = calculateSeed(cube)
 				points = pointNumber(seed)
 
-				// Se supone que ésto es un slice 2D
-				// Parece ser la forma de declarar tamaños e dinámico.
-				//
-				coords := make([][]float64, points)
-				for i := range coords {
-					coords[i] = make([]float64, 3)
-				}
 				distancias := make([]float64, points)
 
 				for cp := 0; cp < points; cp++ {
 					dummy = generatePoint(seed, cube)
-
-					// Tiene que haber alguna forma de hacer ésto más limpio.
-					coords[cp][0] = dummy[0]
-					coords[cp][1] = dummy[1]
-					coords[cp][2] = dummy[2]
-
-					// ¿Seguro que hace falta el timglado de las coordenadas?
 					distancias[cp] = euclidean(punto, dummy)
-
 				}
+
 				sort.Float64s(distancias)
 
 				if distancias[1] < minimo {
