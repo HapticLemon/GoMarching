@@ -58,13 +58,13 @@ func geometric() float64 {
 // Les añado las del cubo para poder calcular la distancia al punto
 // original, ya que las coordenadas de éste no están en el rango 0-1
 //
-func generatePoint(seed int, cube Vectores.Vector) [3]float64 {
+func generatePoint(seed int, cube Vectores.Vector) Vectores.Vector {
 
-	var point [3]float64
+	var point Vectores.Vector
 
-	point[0] = uniform() + float64(cube.X)
-	point[1] = uniform() + float64(cube.Y)
-	point[2] = uniform() + float64(cube.Z)
+	point.X = uniform() + float64(cube.X)
+	point.Y = uniform() + float64(cube.Y)
+	point.Z = uniform() + float64(cube.Z)
 
 	return point
 }
@@ -72,10 +72,10 @@ func generatePoint(seed int, cube Vectores.Vector) [3]float64 {
 // Distancia euclídea entre dos puntos.
 // Quizá exista dentro de alguna librería
 //
-func euclidean(punto Vectores.Vector, coord [3]float64) float64 {
+func euclidean(punto Vectores.Vector, coord Vectores.Vector) float64 {
 	var distancia float64
 
-	distancia = math.Sqrt(math.Pow((coord[0]-punto.X), 2) + math.Pow((coord[1]-punto.Y), 2) + math.Pow((coord[2]-punto.Z), 2))
+	distancia = math.Sqrt(math.Pow((coord.X-punto.X), 2) + math.Pow((coord.Y-punto.Y), 2) + math.Pow((coord.Z-punto.Z), 2))
 
 	return distancia
 
@@ -111,7 +111,7 @@ func Worley3D(punto Vectores.Vector) float64 {
 	var cz int
 
 	var cube Vectores.Vector
-	var dummy [3]float64
+	var dummy Vectores.Vector
 
 	for cx = int(math.Floor(punto.X - 1)); cx <= int(math.Floor(punto.X+2)); cx++ {
 		for cy = int(math.Floor(punto.Y - 1)); cy <= int(math.Floor(punto.Y+2)); cy++ {
