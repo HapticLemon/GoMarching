@@ -31,8 +31,8 @@ func cargaObjetos(escena Escena) {
 			material = NOMAT
 		case "WORLEY3D":
 			material = WORLEY3D
-		case "MARMOL":
-			material = MARMOL
+		case "SIMPLEX":
+			material = SIMPLEX
 		}
 
 		// Es una forma bastante ortopédica de hacerlo pero funciona.
@@ -140,6 +140,16 @@ func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Ve
 		color.R = uint8(float64(currentColor.R) * worley3dValue)
 		color.G = uint8(float64(currentColor.G) * worley3dValue)
 		color.B = uint8(float64(currentColor.B) * worley3dValue)
+		color.A = 255
+	} else if CurrentMaterial == SIMPLEX {
+		// Lo dejo con las coordenadas por respeto a la implementación original.
+		// Podría cambiarse por Vectores.Vector
+		//
+		var SimplexValue = Ruido.Noise3(punto.X, punto.Y, punto.Z)
+
+		color.R = uint8(float64(currentColor.R) * SimplexValue)
+		color.G = uint8(float64(currentColor.G) * SimplexValue)
+		color.B = uint8(float64(currentColor.B) * SimplexValue)
 		color.A = 255
 	}
 

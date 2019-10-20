@@ -3,7 +3,7 @@
   {
     "Name" : "Esfera_0",
     "Type" : "Esfera",
-    "Material" : "NOMAT",
+    "Material" : "SIMPLEX",
     "Radio" : 7,
     "Translation" : [0,1,0],
     "Color" : [100,0,0]

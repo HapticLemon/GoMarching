@@ -47,7 +47,7 @@ type Objeto struct {
 const (
 	NOMAT = iota
 	WORLEY3D
-	MARMOL
+	SIMPLEX
 )
 
 var CurrentMaterial int

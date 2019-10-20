@@ -7,11 +7,10 @@
 20191019    Añadida gestión octaedro desde Json
 20191019    Añadir parámetro de programa con el nombre del archivo de escena y salida.
 20191020    Añadido ruido de Worley3D.
+20191020    Añadido ruido Simplex
 
 TODO :
-    - Añadir texturas
-        Mármol
-    - Ruido simplex 3D (hay en GitHub)
+
 
 
 
