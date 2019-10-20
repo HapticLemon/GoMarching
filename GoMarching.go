@@ -20,7 +20,11 @@ func cargaObjetos(escena Escena) {
 	var id int = 0
 	var material int = 0
 	var translationRaw []int
+	var positionRaw []int
+	var dimensionRaw []int
+	var positionVec = Vectores.Vector{0, 0, 0}
 	var translationVec = Vectores.Vector{0, 0, 0}
+	var dimensionVec = Vectores.Vector{0, 0, 0}
 	var colorRaw []int
 	var colorVec = color.RGBA{0, 0, 0, 0}
 
@@ -43,6 +47,20 @@ func cargaObjetos(escena Escena) {
 			translationVec.X = float64(translationRaw[0])
 			translationVec.Y = float64(translationRaw[1])
 			translationVec.Z = float64(translationRaw[2])
+		}
+
+		if escena.Escena[i].Position != nil {
+			positionRaw = escena.Escena[i].Translation
+			positionVec.X = float64(positionRaw[0])
+			positionVec.Y = float64(positionRaw[1])
+			positionVec.Z = float64(positionRaw[2])
+		}
+
+		if escena.Escena[i].Dimensions != nil {
+			dimensionRaw = escena.Escena[i].Dimensions
+			dimensionVec.X = float64(dimensionRaw[0])
+			dimensionVec.Y = float64(dimensionRaw[1])
+			dimensionVec.Z = float64(dimensionRaw[2])
 		}
 
 		// Lo mismo con el caso del color.
@@ -76,6 +94,18 @@ func cargaObjetos(escena Escena) {
 				float64(escena.Escena[i].Radio),
 			}
 			Objetos = append(Objetos, octaedro)
+		case "Caja":
+			caja := Clases.Caja{
+				Clases.BaseObject{
+					id,
+					material,
+					translationVec,
+					colorVec,
+				},
+				positionVec,
+				dimensionVec,
+			}
+			Objetos = append(Objetos, caja)
 		}
 	}
 }

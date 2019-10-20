@@ -1,12 +1,13 @@
 { "Escena" :
 [
   {
-    "Name" : "Esfera_0",
-    "Type" : "Esfera",
-    "Material" : "SIMPLEX",
-    "Radio" : 7,
-    "Translation" : [0,1,0],
-    "Color" : [100,0,0]
+    "Name" : "Caja_0",
+    "Type" : "Caja",
+    "Material" : "NOMAT",
+    "Posicion" : [0,0,0],
+    "Translation" : [0,10,0],
+    "Dimensions" : [5,5,5],
+    "Color" : [184,115,51]
   },
   {
     "Name" : "Esfera_1",
@@ -24,5 +25,6 @@
     "Translation" : [10,-5,0],
     "Color" : [200,250,250]
   }
+
 ]
 }

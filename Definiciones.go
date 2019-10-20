@@ -39,8 +39,10 @@ type Objeto struct {
 	Type        string `json:"Type"`
 	Material    string `json:"Material"`
 	Radio       int    `json:"Radio"`
+	Position    []int  `json:Position`
 	Translation []int  `json:Translation`
-	Color       []int  `json:Translation`
+	Dimensions  []int  `json:Dimensions`
+	Color       []int  `json:Color`
 }
 
 // En Go las enumeraciones se montan así.

@@ -10,7 +10,8 @@
 20191020    Añadido ruido Simplex
 
 TODO :
-
+    - Añadir Objeto caja
+    - Añadir objeto toro
 
 
 
