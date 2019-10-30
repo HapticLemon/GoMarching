@@ -10,8 +10,10 @@ import (
 	"image/color"
 	"image/jpeg"
 	"io/ioutil"
+	"log"
 	"math"
 	"os"
+	"time"
 )
 
 // Carga de objetos desde archivo Json
@@ -120,12 +122,14 @@ func distanciaEsfera(punto Vectores.Vector) float64 {
 // Desde aquí llamaré a la función de distancia. De momento solemente será una esfera.
 // Por implementar
 //
-func mapTheWorld(punto Vectores.Vector) float64 {
+func mapTheWorld(punto Vectores.Vector) (float64, uint8) {
 	// Distancia inicial arbitrariamente grande.
 	//
 	var distancia float64 = 1000
 	var distanciaObjeto float64
 	var material int
+	var cont uint8 = 0
+	var indiceObjeto uint8 = 0
 
 	for _, elemento := range Objetos {
 		distanciaObjeto = elemento.Distancia(punto)
@@ -133,22 +137,28 @@ func mapTheWorld(punto Vectores.Vector) float64 {
 			distancia = distanciaObjeto
 			currentColor = elemento.GetColor()
 			material = elemento.GetMaterial()
+			indiceObjeto = cont
 		}
+		cont += 1
 	}
 	CurrentMaterial = material
-	return distancia
+	return distancia, indiceObjeto
 }
 
 // Cálculo de la normal (gradiente) en un punto.
 //
-func calculateNormal(punto Vectores.Vector) Vectores.Vector {
+func calculateNormal(punto Vectores.Vector, posObjeto uint8) Vectores.Vector {
 	var gradiente = Vectores.Vector{1, 0, 0}
 	var EPSILON float64 = 0.01
 
-	gradiente.X = mapTheWorld(Vectores.Vector{punto.X + EPSILON, punto.Y, punto.Z}) - mapTheWorld(Vectores.Vector{punto.X - EPSILON, punto.Y, punto.Z})
+	gradiente.X = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X + EPSILON, punto.Y, punto.Z}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X - EPSILON, punto.Y, punto.Z})
+	gradiente.Y = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y + EPSILON, punto.Z}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y - EPSILON, punto.Z})
+	gradiente.Z = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y, punto.Z + EPSILON}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y, punto.Z - EPSILON})
+
+	/*gradiente.X = mapTheWorld(Vectores.Vector{punto.X + EPSILON, punto.Y, punto.Z}) - mapTheWorld(Vectores.Vector{punto.X - EPSILON, punto.Y, punto.Z})
 	gradiente.Y = mapTheWorld(Vectores.Vector{punto.X, punto.Y + EPSILON, punto.Z}) - mapTheWorld(Vectores.Vector{punto.X, punto.Y - EPSILON, punto.Z})
 	gradiente.Z = mapTheWorld(Vectores.Vector{punto.X, punto.Y, punto.Z + EPSILON}) - mapTheWorld(Vectores.Vector{punto.X, punto.Y, punto.Z - EPSILON})
-
+	*/
 	gradiente.MultiplyByScalar(-1)
 	return gradiente.Normalize()
 }
@@ -177,6 +187,8 @@ func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Ve
 		//
 		var SimplexValue = Ruido.Noise3(punto.X, punto.Y, punto.Z)
 
+		SimplexValue = Ruido.Clip(SimplexValue, 0, 1)
+
 		color.R = uint8(float64(currentColor.R) * SimplexValue)
 		color.G = uint8(float64(currentColor.G) * SimplexValue)
 		color.B = uint8(float64(currentColor.B) * SimplexValue)
@@ -193,16 +205,17 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 	var normal Vectores.Vector
 	var t float64 = 0
 	var diffuseIntensity float64 = 0
-	var distancia float64 = 0
-	var color = color.RGBA{0, 0, 0, 255}
+	//var distancia float64 = 0
+	var color = color.RGBA{100, 100, 150, 255}
+	//var posObjeto uint = 0
 
 	for x := 0; x < MAXSTEPS; x++ {
 		punto = ro.Add(rd.MultiplyByScalar(t))
-		distancia = mapTheWorld(punto)
+		distancia, posObjeto := mapTheWorld(punto)
 
 		if distancia < MINIMUM_HIT_DISTANCE {
 			directionToLight = punto.Sub(LIGHT).Normalize()
-			normal = calculateNormal(punto)
+			normal = calculateNormal(punto, posObjeto)
 			diffuseIntensity = math.Max(0.0, normal.Dot(directionToLight))
 			color = ilumina(punto, diffuseIntensity, normal)
 			return color
@@ -210,7 +223,7 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 		t += distancia
 	}
 
-	// Devuelvo el color negro de fondo.
+	// Devuelvo el color de fondo.
 	return color
 }
 
@@ -228,6 +241,8 @@ func main() {
 
 	var fileIn string
 	var fileOut string
+
+	start := time.Now()
 
 	//argsWithProg := os.Args
 	argsWithoutProg := os.Args[1:]
@@ -291,6 +306,9 @@ func main() {
 
 		}
 	}
+	elapsed := time.Since(start)
+	log.Printf("Binomial took %s", elapsed)
+
 	var opt jpeg.Options
 
 	opt.Quality = 80
@@ -303,4 +321,5 @@ func main() {
 	}
 
 	fmt.Printf("Generated image to %s \n", fileOut)
+
 }

@@ -84,7 +84,7 @@ func euclidean(punto Vectores.Vector, coord Vectores.Vector) float64 {
 // Función clip. Devuelve valor siempre que esté entre min y max; de lo contrario
 // retorna uno de éstos valores.
 //
-func clip(valor float64, min float64, max float64) float64 {
+func Clip(valor float64, min float64, max float64) float64 {
 	if valor < min {
 		return min
 	}
@@ -138,6 +138,6 @@ func Worley3D(punto Vectores.Vector) float64 {
 			}
 		}
 	}
-	return clip(minimo, 0, 1)
+	return Clip(minimo, 0, 1)
 
 }

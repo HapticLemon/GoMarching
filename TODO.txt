@@ -8,10 +8,13 @@
 20191019    Añadir parámetro de programa con el nombre del archivo de escena y salida.
 20191020    Añadido ruido de Worley3D.
 20191020    Añadido ruido Simplex
+20191020    Añadido objeto Caja
 
 TODO :
-    - Añadir Objeto caja
     - Añadir objeto toro
+    - Añadir sombras
+    - Añadir antialiasing
+    - Investigar otras texturas
 
 
 

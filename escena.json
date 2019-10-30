@@ -1,29 +1,20 @@
 { "Escena" :
 [
   {
-    "Name" : "Caja_0",
-    "Type" : "Caja",
-    "Material" : "NOMAT",
-    "Posicion" : [0,0,0],
-    "Translation" : [0,10,0],
-    "Dimensions" : [5,5,5],
-    "Color" : [184,115,51]
-  },
-  {
     "Name" : "Esfera_1",
     "Type" : "Esfera",
-    "Material" : "WORLEY3D",
-    "Radio" : 4,
-    "Translation" : [7,10,0],
+    "Material" : "NOMAT",
+    "Radio" : 5,
+    "Translation" : [0,0,0],
     "Color" : [0,250,250]
   },
   {
-    "Name" : "Octaedro_0",
-    "Type" : "Octaedro",
+    "Name" : "Esfera_2",
+    "Type" : "Esfera",
     "Material" : "NOMAT",
     "Radio" : 6,
-    "Translation" : [10,-5,0],
-    "Color" : [200,250,250]
+    "Translation" : [6,0,0],
+    "Color" : [40,250,250]
   }
 
 ]
