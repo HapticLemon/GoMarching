@@ -9,12 +9,15 @@
 20191020    Añadido ruido de Worley3D.
 20191020    Añadido ruido Simplex
 20191020    Añadido objeto Caja
+20191104    Añadida niebla.
+20191104    Añadido FOV.
 
 TODO :
     - Añadir objeto toro
     - Añadir sombras
     - Añadir antialiasing
     - Investigar otras texturas
+
 
 
 

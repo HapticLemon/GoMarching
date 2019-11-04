@@ -10,20 +10,27 @@ var FL float64 = 0.5
 
 const CTEOCTAEDRO = 0.57735027
 
-var EYE = Vectores.Vector{0, 0, -15}
+var EYE = Vectores.Vector{0, 0, 0}
 var UP = Vectores.Vector{0, 1, 0}
 var RIGHT = Vectores.Vector{1, 0, 0}
 var FORWARD = Vectores.Vector{0, 0, 1}
-var LIGHT = Vectores.Vector{0, 30, 0.0}
+var LIGHT = Vectores.Vector{0, -200, -150.0}
 var COLOR = Vectores.Vector{0, 0, 200}
+var FOGCOLOR = color.RGBA{R: 128, G: 0, B: 128, A: 255}
 
-var WIDTH int = 640
-var HEIGHT int = 480
+var WIDTH int = 800
+var HEIGHT int = 600
+
+// Ángulo para el FOV. Actúa como una especie de zoom.
+var ALPHA float32 = 55.0
 
 var correccion float64 = 0.5
 var ImageAspectRatio float64 = float64(WIDTH) / float64(HEIGHT)
 var MAXSTEPS = 32
-var MINIMUM_HIT_DISTANCE = 0.05
+var MINIMUM_HIT_DISTANCE = 0.35
+var EPSILON float64 = 0.01
+var FOG bool = true
+var DENSIDAD float64 = 0.005
 
 // Slice genérica en la que almacenaremos todos los objetos
 //

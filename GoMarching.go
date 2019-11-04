@@ -149,16 +149,11 @@ func mapTheWorld(punto Vectores.Vector) (float64, uint8) {
 //
 func calculateNormal(punto Vectores.Vector, posObjeto uint8) Vectores.Vector {
 	var gradiente = Vectores.Vector{1, 0, 0}
-	var EPSILON float64 = 0.01
 
 	gradiente.X = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X + EPSILON, punto.Y, punto.Z}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X - EPSILON, punto.Y, punto.Z})
 	gradiente.Y = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y + EPSILON, punto.Z}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y - EPSILON, punto.Z})
 	gradiente.Z = Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y, punto.Z + EPSILON}) - Objetos[posObjeto].Distancia(Vectores.Vector{punto.X, punto.Y, punto.Z - EPSILON})
 
-	/*gradiente.X = mapTheWorld(Vectores.Vector{punto.X + EPSILON, punto.Y, punto.Z}) - mapTheWorld(Vectores.Vector{punto.X - EPSILON, punto.Y, punto.Z})
-	gradiente.Y = mapTheWorld(Vectores.Vector{punto.X, punto.Y + EPSILON, punto.Z}) - mapTheWorld(Vectores.Vector{punto.X, punto.Y - EPSILON, punto.Z})
-	gradiente.Z = mapTheWorld(Vectores.Vector{punto.X, punto.Y, punto.Z + EPSILON}) - mapTheWorld(Vectores.Vector{punto.X, punto.Y, punto.Z - EPSILON})
-	*/
 	gradiente.MultiplyByScalar(-1)
 	return gradiente.Normalize()
 }
@@ -198,6 +193,28 @@ func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Ve
 	return color
 }
 
+// Según idea de Íñigo Quílez.
+// https://iquilezles.org/www/articles/fog/fog.htm
+func applyFog(color color.RGBA, distancia float64) color.RGBA {
+	var fogAmount float32 = 0.0
+
+	fogAmount = float32(1.0 - math.Pow(math.E, -distancia*DENSIDAD))
+
+	return mixColor(color, FOGCOLOR, fogAmount)
+}
+
+// Interpolación entre dos colores.
+//
+func mixColor(x color.RGBA, y color.RGBA, a float32) color.RGBA {
+	var resultado color.RGBA
+
+	resultado.R = uint8(float32(x.R)*(1-a) + float32(y.R)*a)
+	resultado.G = uint8(float32(x.G)*(1-a) + float32(y.G)*a)
+	resultado.B = uint8(float32(x.B)*(1-a) + float32(y.B)*a)
+
+	return resultado
+}
+
 func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 
 	var punto Vectores.Vector
@@ -206,7 +223,7 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 	var t float64 = 0
 	var diffuseIntensity float64 = 0
 	//var distancia float64 = 0
-	var color = color.RGBA{100, 100, 150, 255}
+	var color = color.RGBA{30, 30, 150, 255}
 	//var posObjeto uint = 0
 
 	for x := 0; x < MAXSTEPS; x++ {
@@ -218,6 +235,9 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 			normal = calculateNormal(punto, posObjeto)
 			diffuseIntensity = math.Max(0.0, normal.Dot(directionToLight))
 			color = ilumina(punto, diffuseIntensity, normal)
+			if FOG == true {
+				color = applyFog(color, t)
+			}
 			return color
 		}
 		t += distancia
@@ -237,6 +257,7 @@ func main() {
 
 	var ro Vectores.Vector
 	var rd Vectores.Vector
+	var nuevo Vectores.Vector
 	var color color.RGBA
 
 	var fileIn string
@@ -279,6 +300,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Calculo el Field of View. El ángulo es de 45 grados.
+	//
+	var FOV float64 = float64(math.Tan(float64(ALPHA / 2.0 * math.Pi / 180.0)))
+
 	for x := 0; x < WIDTH; x++ {
 		for y := 0; y < WIDTH; y++ {
 			// Hacemos las conversiones de espacios
@@ -287,19 +312,24 @@ func main() {
 			NDC_y = (float64(y) + correccion) / float64(HEIGHT)
 
 			PixelScreen_x = 2*NDC_x - 1
-			PixelScreen_y = 2*NDC_y - 1
+			PixelScreen_y = 1 - 2*NDC_y
 
-			PixelCamera_x = PixelScreen_x * ImageAspectRatio
-			PixelCamera_y = PixelScreen_y
+			PixelCamera_x = PixelScreen_x * ImageAspectRatio * FOV
+			PixelCamera_y = PixelScreen_y * FOV
 
 			// Origen y dirección
 
-			ro = EYE.Add(FORWARD.MultiplyByScalar(FL)).Add(RIGHT.MultiplyByScalar(PixelCamera_x)).Add(UP.MultiplyByScalar(PixelCamera_y))
-			rd = ro.Sub(EYE).Normalize()
+			//ro = EYE.Add(FORWARD.MultiplyByScalar(FL)).Add(RIGHT.MultiplyByScalar(PixelCamera_x)).Add(UP.MultiplyByScalar(PixelCamera_y))
+			//rd = ro.Sub(EYE).Normalize()
 
-			if x == 139 && y == 97 {
-				fmt.Println("GatetERlZ \n")
-			}
+			ro = EYE
+			nuevo.X = PixelCamera_x
+			nuevo.Y = PixelCamera_y
+			nuevo.Z = -1
+
+			rd = nuevo.Sub(ro)
+			//rd = Normalize(Sub(Point3{x : PixelCamera_X, y: PixelCamera_Y, z : -1.0}, ro));
+
 			color = raymarch(ro, rd)
 
 			img.Set(x, y, color)

@@ -4,17 +4,17 @@
     "Name" : "Esfera_1",
     "Type" : "Esfera",
     "Material" : "NOMAT",
-    "Radio" : 5,
-    "Translation" : [0,0,0],
-    "Color" : [0,250,250]
+    "Radio" : 30,
+    "Translation" : [0,0,-150],
+    "Color" : [250,0,0]
   },
   {
     "Name" : "Esfera_2",
     "Type" : "Esfera",
     "Material" : "NOMAT",
-    "Radio" : 6,
-    "Translation" : [6,0,0],
-    "Color" : [40,250,250]
+    "Radio" : 30,
+    "Translation" : [40,0,-250],
+    "Color" : [250,0,0]
   }
 
 ]
