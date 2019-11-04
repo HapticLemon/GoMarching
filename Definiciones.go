@@ -17,6 +17,7 @@ var FORWARD = Vectores.Vector{0, 0, 1}
 var LIGHT = Vectores.Vector{0, -200, -150.0}
 var COLOR = Vectores.Vector{0, 0, 200}
 var FOGCOLOR = color.RGBA{R: 128, G: 0, B: 128, A: 255}
+var SHADOWCOLOR = color.RGBA{R: 0, G: 0, B: 0, A: 255}
 
 var WIDTH int = 800
 var HEIGHT int = 600
@@ -30,7 +31,9 @@ var MAXSTEPS = 32
 var MINIMUM_HIT_DISTANCE = 0.35
 var EPSILON float64 = 0.01
 var FOG bool = true
+var CASTSHADOWS = true
 var DENSIDAD float64 = 0.005
+var NOVENTAGRADOSRAD float32 = 1.5708
 
 // Slice genérica en la que almacenaremos todos los objetos
 //

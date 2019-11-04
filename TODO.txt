@@ -17,6 +17,7 @@ TODO :
     - Añadir sombras
     - Añadir antialiasing
     - Investigar otras texturas
+    - Revisar la lista de objetos para que sea local
 
 
 

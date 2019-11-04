@@ -122,7 +122,7 @@ func distanciaEsfera(punto Vectores.Vector) float64 {
 // Desde aquí llamaré a la función de distancia. De momento solemente será una esfera.
 // Por implementar
 //
-func mapTheWorld(punto Vectores.Vector) (float64, uint8) {
+/*func mapTheWorld(punto Vectores.Vector) (float64, uint8) {
 	// Distancia inicial arbitrariamente grande.
 	//
 	var distancia float64 = 1000
@@ -132,6 +132,33 @@ func mapTheWorld(punto Vectores.Vector) (float64, uint8) {
 	var indiceObjeto uint8 = 0
 
 	for _, elemento := range Objetos {
+		distanciaObjeto = elemento.Distancia(punto)
+		if distanciaObjeto < distancia {
+			distancia = distanciaObjeto
+			currentColor = elemento.GetColor()
+			material = elemento.GetMaterial()
+			indiceObjeto = cont
+		}
+		cont += 1
+	}
+	CurrentMaterial = material
+	return distancia, indiceObjeto
+}*/
+
+// Hay que hacer que mapTheWorld funcione pasando la escena como parámetro.
+// Supongo que la forma correcta de hacerlo sería con el vector de objetos en local
+// y no en global.
+//
+func mapTheWorld(punto Vectores.Vector, Escena []Clases.Objeto) (float64, uint8) {
+	// Distancia inicial arbitrariamente grande.
+	//
+	var distancia float64 = 1000
+	var distanciaObjeto float64
+	var material int
+	var cont uint8 = 0
+	var indiceObjeto uint8 = 0
+
+	for _, elemento := range Escena {
 		distanciaObjeto = elemento.Distancia(punto)
 		if distanciaObjeto < distancia {
 			distancia = distanciaObjeto
@@ -193,7 +220,7 @@ func ilumina(punto Vectores.Vector, diffuseIntensity float64, normal Vectores.Ve
 	return color
 }
 
-// Según idea de Íñigo Quílez.
+// Implementación de niebla según idea de Íñigo Quílez.
 // https://iquilezles.org/www/articles/fog/fog.htm
 func applyFog(color color.RGBA, distancia float64) color.RGBA {
 	var fogAmount float32 = 0.0
@@ -215,6 +242,72 @@ func mixColor(x color.RGBA, y color.RGBA, a float32) color.RGBA {
 	return resultado
 }
 
+func softShadow(ro Vectores.Vector, posObjeto uint8, normal Vectores.Vector) float32 {
+	var restoObjetos []Clases.Objeto
+	var cont uint8 = 0
+	var rd Vectores.Vector
+	var punto Vectores.Vector
+	var angulo float32 = 0
+	var t float64 = 0
+
+	//var posObjeto uint8 = 0
+	var shadow float32 = 0
+
+	// Monto un sclice con los todos los elementos excepto el procesado ya que no
+	// puede darse sombra a sí mismo.
+	//
+	for _, elemento := range Objetos {
+		if posObjeto != cont {
+			restoObjetos = append(restoObjetos, elemento)
+		}
+		cont += 1
+	}
+
+	rd = LIGHT.Sub(ro).Normalize()
+
+	// Compruebo el ángulo entre el vector hacia la luz y la normal del objeto.
+	// Si dicho ángulo pasa de 90 grados (en radianes), no hay sombra. Nos sirve para
+	// evitar "dobles sombras", por ejemplo en la parte superior e inferior de una esfera.
+	//
+	angulo = float32(math.Acos(normal.Dot(rd) / normal.Length() * rd.Length()))
+
+	if angulo > NOVENTAGRADOSRAD {
+		return 1.0
+	}
+
+	for x := 1; x < MAXSTEPS; x++ {
+		punto = rd.MultiplyByScalar(t).Add(ro)
+		distancia, _ := mapTheWorld(punto, restoObjetos)
+		if distancia < MINIMUM_HIT_DISTANCE {
+			return 0.0
+		}
+
+		shadow = min(float32((8.0*distancia)/float64(x)), shadow)
+		t += distancia
+	}
+
+	return clip(shadow, 0, 1)
+
+	/*	for i in 1..MAXSTEPS{
+			punto = Add(ro,MultiplyByScalar(rd,t));
+			let (distancia, idObjeto, colorObjeto, materialObjeto)  = mapTheWorld(punto, &restoEscena);
+			if distancia < MINIMUM_HIT_DISTANCE {
+				return 0.0;
+			}
+			shadow = ((8.0 * distancia) / i as f32).min(shadow);
+			t += distancia
+		}
+
+		return clip(shadow,0.0,1.0)*/
+}
+
+func min(a float32, b float32) float32 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 
 	var punto Vectores.Vector
@@ -222,17 +315,39 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 	var normal Vectores.Vector
 	var t float64 = 0
 	var diffuseIntensity float64 = 0
+	var valorSombra float32 = 0
+
 	//var distancia float64 = 0
 	var color = color.RGBA{30, 30, 150, 255}
 	//var posObjeto uint = 0
 
 	for x := 0; x < MAXSTEPS; x++ {
 		punto = ro.Add(rd.MultiplyByScalar(t))
-		distancia, posObjeto := mapTheWorld(punto)
+		distancia, posObjeto := mapTheWorld(punto, Objetos)
 
 		if distancia < MINIMUM_HIT_DISTANCE {
-			directionToLight = punto.Sub(LIGHT).Normalize()
+			//directionToLight = punto.Sub(LIGHT).Normalize()
+			directionToLight = LIGHT.Sub(punto).Normalize()
 			normal = calculateNormal(punto, posObjeto)
+
+			// Si sólo tenemos un objeto no calcularemos sombras.
+			// TODO : Hay que revisar la sombra para que se muestre bien; parece que "atraviesa".
+			// TODO : También debe de verse afectada por la niebla.
+			if posObjeto == 0 {
+				//print("GateteeRLz")
+			}
+			if CASTSHADOWS == true {
+				if len(Objetos) > 1 {
+					valorSombra = softShadow(punto, posObjeto, normal)
+					if valorSombra == 0.0 {
+						if FOG == true {
+							return applyFog(SHADOWCOLOR, t)
+						}
+						return SHADOWCOLOR
+					}
+				}
+			}
+
 			diffuseIntensity = math.Max(0.0, normal.Dot(directionToLight))
 			color = ilumina(punto, diffuseIntensity, normal)
 			if FOG == true {
@@ -245,6 +360,16 @@ func raymarch(ro Vectores.Vector, rd Vectores.Vector) color.RGBA {
 
 	// Devuelvo el color de fondo.
 	return color
+}
+
+func clip(valor float32, max float32, min float32) float32 {
+	if valor > max {
+		return max
+	}
+	if valor < min {
+		return min
+	}
+	return valor
 }
 
 func main() {
@@ -305,14 +430,14 @@ func main() {
 	var FOV float64 = float64(math.Tan(float64(ALPHA / 2.0 * math.Pi / 180.0)))
 
 	for x := 0; x < WIDTH; x++ {
-		for y := 0; y < WIDTH; y++ {
+		for y := 0; y < HEIGHT; y++ {
 			// Hacemos las conversiones de espacios
 			//
 			NDC_x = (float64(x) + correccion) / float64(WIDTH)
 			NDC_y = (float64(y) + correccion) / float64(HEIGHT)
 
 			PixelScreen_x = 2*NDC_x - 1
-			PixelScreen_y = 1 - 2*NDC_y
+			PixelScreen_y = 2*NDC_y - 1
 
 			PixelCamera_x = PixelScreen_x * ImageAspectRatio * FOV
 			PixelCamera_y = PixelScreen_y * FOV
@@ -327,7 +452,7 @@ func main() {
 			nuevo.Y = PixelCamera_y
 			nuevo.Z = -1
 
-			rd = nuevo.Sub(ro)
+			rd = nuevo.Sub(ro).Normalize()
 			//rd = Normalize(Sub(Point3{x : PixelCamera_X, y: PixelCamera_Y, z : -1.0}, ro));
 
 			color = raymarch(ro, rd)

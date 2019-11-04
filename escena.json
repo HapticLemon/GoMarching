@@ -9,13 +9,12 @@
     "Color" : [250,0,0]
   },
   {
-    "Name" : "Esfera_2",
-    "Type" : "Esfera",
+    "Name" : "Octaedro_0",
+    "Type" : "Octaedro",
     "Material" : "NOMAT",
-    "Radio" : 30,
-    "Translation" : [40,0,-250],
-    "Color" : [250,0,0]
+    "Radio" : 10,
+    "Translation" : [0,-60,-140],
+    "Color" : [0,0,250]
   }
-
 ]
 }
